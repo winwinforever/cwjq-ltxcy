@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>阳台立体小菜园设计师 · 我为餐桌添道菜</title>
+    <style>
+        :root {
+            --green-50: #f6faf3;
+            --green-500: #5fa84a;
+            --green-600: #478a34;
+            --green-700: #366b26;
+            --cream: #fdf7ed;
+            --text-dark: #3b3830;
+            --text-mid: #6d675c;
+            --border-soft: #e4ded2;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f5f7f3;
+            min-height: 100vh;
+            color: var(--text-dark);
+            font-size: 18px;
+        }
+        .app-header {
+            background: white;
+            padding: 18px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--green-700);
+        }
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: #6aaf5a;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+        .designer {
+            font-size: 0.9rem;
+            color: var(--text-mid);
+            margin-top: 2px;
+        }
+        .btn {
+            padding: 12px 26px;
+            border-radius: 28px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+        }
+        .btn-outline {
+            border: 2px solid #84c673;
+            background: white;
+            color: var(--green-600);
+            margin-left: 10px;
+        }
+        .btn-filled {
+            background: #4d8f3d;
+            color: white;
+            margin-left: 10px;
+            box-shadow: 0 3px 10px rgba(80, 140, 60, 0.2);
+        }
+        .btn-filled:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 24px;
+        }
+        .step-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.3rem;
+            border: 3px solid #ddd;
+            background: white;
+            color: #999;
+        }
+        .step-circle.active {
+            border-color: var(--green-500);
+            background: #e9f5e3;
+            color: var(--green-700);
+        }
+        .step-circle.done {
+            border-color: #84c673;
+            background: #b0dba3;
+            color: white;
+        }
+        .step-line {
+            width: 44px;
+            height: 3px;
+            background: #ddd;
+            margin: 0 4px;
+        }
+        .step-label {
+            font-size: 0.9rem;
+            color: #999;
+            margin-top: 4px;
+            text-align: center;
+        }
+        .step-dot-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stage-panel {
+            background: white;
+            border-radius: 18px;
+            padding: 32px 28px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            display: none;
+        }
+        .stage-panel.visible {
+            display: block;
+        }
+        .stage-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .stage-subtitle {
+            font-size: 1.2rem;
+            color: #777;
+            margin-bottom: 20px;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 14px;
+        }
+        .option-card {
+            border: 2px solid #eee;
+            border-radius: 14px;
+            padding: 18px 12px;
+            cursor: pointer;
+            text-align: center;
+            background: #fefefe;
+            transition: 0.2s;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            position: relative;
+        }
+        .option-card:hover {
+            border-color: #b8d8a8;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .option-card.selected {
+            border-color: var(--green-500);
+            background: #f4faf0;
+        }
+        .option-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            background: var(--green-500);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .option-card.wrong-match {
+            border-color: #f0b0a0;
+            background: #fff5f2;
+        }
+        .option-card.wrong-match::after {
+            content: '✕';
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            background: #d9534f;
+            color: white;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-icon {
+            font-size: 2.8rem;
+        }
+        .card-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .card-desc {
+            font-size: 0.8rem;
+            color: #999;
+        }
+        .selection-summary {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: #fdf7ed;
+            border-radius: 10px;
+            font-size: 1.1rem;
+        }
+        .summary-chip {
+            padding: 5px 12px;
+            background: white;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 1px solid #eee;
+        }
+        .alert-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fffef5;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            max-width: 480px;
+            text-align: center;
+            font-size: 1.2rem;
+            border: 3px solid #f0c8a0;
+        }
+        .alert-dialog p {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: #c77820;
+            line-height: 1.6;
+        }
+        .rack-inst-block {
+            background: #f0f8ff;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            border: 1px solid #c8d8e8;
+        }
+        .rack-inst-block select,
+        .rack-inst-block input {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 2px solid #84c673;
+            font-size: 0.95rem;
+            margin: 2px;
+        }
+        .rack-inst-block input {
+            width: 55px;
+            text-align: center;
+        }
+        .container-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+            padding: 8px;
+            background: #fff;
+            border-radius: 8px;
+            align-items: center;
+        }
+        .container-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-right: 1px solid #ddd;
+        }
+        .container-item:last-child {
+            border-right: none;
+        }
+        .layer-plan-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 6px 0;
+            flex-wrap: wrap;
+            background: #fafdf5;
+            padding: 6px 8px;
+            border-radius: 6px;
+        }
+        .layer-plan-row span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .layout-canvas {
+            background: #f0f8ec;
+            border-radius: 12px;
+            border: 2px solid #a0b8d0;
+            position: relative;
+            min-height: 500px;
+        }
+        .toolbox {
+            background: #fdfcf8;
+            border-radius: 12px;
+            padding: 14px;
+            border: 1px solid #eee;
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toolbox-chip {
+            padding: 8px 12px;
+            background: white;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            cursor: grab;
+            display: inline-block;
+            margin: 4px;
+            font-size: 0.9rem;
+        }
+        .rack-info-panel {
+            background: #fafdf5;
+            border-radius: 10px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            border: 1px solid #e0e8d0;
+        }
+        .rack-info-item {
+            margin-bottom: 8px;
+            padding: 4px 0;
+            border-bottom: 1px dashed #d0d8c0;
+        }
+        .rack-info-item:last-child {
+            border-bottom: none;
+        }
+        .veg-reminder-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: #fefaf0;
+            border-radius: 10px;
+            border: 1px solid #e8dcc0;
+        }
+        .veg-reminder-bar strong {
+            color: var(--green-700);
+            white-space: nowrap;
+        }
+        .blueprint-wrapper {
+            background: #e8f0f8;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .signature-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .signature-box {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 20px;
+        }
+        .design-card {
+            display: flex;
+            flex-direction: column;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            position: relative;
+        }
+        .design-card .design-label {
+            padding: 8px 12px;
+            background: #f8fbf5;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .design-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .card-btns {
+            display: flex;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #fafafa;
+        }
+        .toast-fixed {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3b3830;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 22px;
+            font-weight: 600;
+            font-size: 1rem;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .toast-fixed.show {
+            opacity: 1;
+        }
+        @media (max-width:768px) {
+            .step-indicator {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .stage-panel {
+                padding: 20px 14px;
+            }
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 8px;
+            }
+            .option-card {
+                min-height: 100px;
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toast-fixed" id="toast"></div>
+    <header class="app-header">
+        <div class="logo"><span class="logo-icon">🌱</span>
+            <div>
+                <div>阳台立体小菜园设计师</div>
+                <div class="designer">设计者：崔巍金琦</div>
+            </div>
+        </div>
+        <div><button class="btn btn-outline" id="btnReset">重新开始</button></div>
+    </header>
+    <div class="main-container">
+        <div class="step-indicator">
+            <div class="step-dot-wrapper">
+                <div class="step-circle active" data-step="1">1</div>
+                <div class="step-label active">阳台条件</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-dot-wrapper">
+                <div class="step-circle" data-step="2">2</div>
+                <div class="step-label">选择蔬菜</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-dot-wrapper">
+                <div class="step-circle" data-step="3">3</div>
+                <div class="step-label">计算选材</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-dot-wrapper">
+                <div class="step-circle" data-step="4">4</div>
+                <div class="step-label">空间规划</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-dot-wrapper">
+                <div class="step-circle" data-step="5">5</div>
+                <div class="step-label">工程图纸</div>
+            </div>
+        </div>
+
+        <!-- 环节1 -->
+        <div class="stage-panel visible" id="stage1">
+            <div class="stage-title">1 · 阳台条件</div>
+            <div class="stage-subtitle">阳台长4米、宽2米、高2米，面积约8㎡，相当于一间小书房或一个稍大的卫生间。</div>
+            <div style="display:flex;align-items:center;gap:40px;background:#f0f8ec;border-radius:18px;padding:30px;flex-wrap:wrap;">
+                <svg viewBox="0 0 400 280" width="400" height="280">
+                    <polygon points="60,200 280,200 300,180 80,180" fill="#f0e2c8" stroke="#b8a88a" stroke-width="2" />
+                    <polygon points="80,180 300,180 300,30 80,30" fill="#fdfcf8" stroke="#b8a88a" stroke-width="2" />
+                    <polygon points="300,180 300,30 270,15 270,160" fill="#f5f0e8" stroke="#b8a88a" stroke-width="2" />
+                    <rect x="130" y="50" width="80" height="90" fill="#d4ecfc" stroke="#b0c8d8" stroke-width="2" rx="4" />
+                    <line x1="170" y1="50" x2="170" y2="140" stroke="#b0c8d8" stroke-width="2" />
+                    <line x1="60" y1="200" x2="300" y2="200" stroke="#c0b090" stroke-width="3" />
+                    <text x="180" y="235" text-anchor="middle" font-size="16" fill="#333">4米（长）</text>
+                    <text x="320" y="110" text-anchor="middle" font-size="16" fill="#333" transform="rotate(-45 320 110)">2米（宽）</text>
+                    <text x="40" y="110" text-anchor="middle" font-size="16" fill="#333" transform="rotate(-90 40 110)">2米（高）</text>
+                </svg>
+                <div style="font-size:1.3rem;"><strong style="font-size:1.6rem;">南向 · 开放式阳台</strong><br>长4m × 宽2m × 高2m<br>面积：8㎡</div>
+            </div>
+            <div style="text-align:right;margin-top:20px;"><button class="btn btn-filled" id="btn1Next">下一步：选择蔬菜 →</button></div>
+        </div>
+
+        <!-- 环节2 -->
+        <div class="stage-panel" id="stage2">
+            <div class="stage-title">2 · 选择蔬菜种类</div>
+            <div class="stage-subtitle">温馨提示：“根据常见、实用、易种、短周期选择”</div>
+            <div class="card-grid" id="vegGrid"></div>
+            <div class="selection-summary" id="vegSummary" style="display:none;"><span>已选蔬菜：</span><span id="vegChips"></span></div>
+            <div style="display:flex;justify-content:space-between;margin-top:20px;"><button class="btn btn-outline" id="btn2Back">← 返回</button><button class="btn btn-filled" id="btn2Next" disabled>下一步：计算选材 →</button></div>
+        </div>
+
+        <!-- 环节3 -->
+        <div class="stage-panel" id="stage3">
+            <div class="stage-title">3 · 计算选材</div>
+            <div class="stage-subtitle">阳台：400cm×200cm×200cm。支架尺寸为<strong>最大尺寸</strong>。<br>💡 <em>选好支架后，为每个支架分配容器数量，再为每一层安排具体容器。</em></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div><h4>栽培容器</h4><div class="card-grid" id="matGrid3"></div></div>
+                <div><h4>支架类型（最大尺寸）</h4><div class="card-grid" id="frameGrid3"></div></div>
+            </div>
+            <div id="calcArea" style="margin-top:20px;"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:20px;"><button class="btn btn-outline" id="btn3Back">← 返回</button><button class="btn btn-filled" id="btn3Next" disabled>下一步：空间规划 →</button></div>
+        </div>
+
+        <!-- 环节4 -->
+        <div class="stage-panel" id="stage4">
+            <div class="stage-title">4 · 空间规划</div>
+            <div class="stage-subtitle">拖拽支架和容器到阳台中。支架详情在左侧面板显示，空支架标注“空”。</div>
+            <div style="display:flex;gap:20px;">
+                <div class="toolbox">
+                    <h4>🏗️ 支架</h4>
+                    <button class="btn btn-outline" style="width:100%;margin:4px 0;" onclick="addRackToCanvas('a_frame')">△ A型支架</button>
+                    <button class="btn btn-outline" style="width:100%;margin:4px 0;" onclick="addRackToCanvas('h_frame')">▮ H型支架</button>
+                    <hr><h4>🧱 容器</h4>
+                    <div id="containerTools" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+                    <hr><h4>💧 水源</h4>
+                    <div><label><input type="radio" name="waterSource" value="near" onchange="updateWaterSource('near')">近水源</label><label style="margin-left:8px;"><input type="radio" name="waterSource" value="far" onchange="updateWaterSource('far')">远水源</label></div>
+                    <div id="waterTools"></div>
+                    <hr><h4>📋 支架详情</h4>
+                    <div class="rack-info-panel" id="rackInfoPanel"></div>
+                </div>
+                <div class="layout-canvas" style="flex:1;" id="layoutCanvas"><canvas id="planCanvas" width="800" height="500"></canvas></div>
+            </div>
+            <div class="veg-reminder-bar">
+                <strong>🥬 已选蔬菜：</strong>
+                <div id="vegPreviewInStage4" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+            </div>
+            <div style="margin-top:16px;"><textarea id="suppNote" style="width:100%;border-radius:8px;padding:8px;min-height:60px;" placeholder="我的补充说明（例如：想在窗户边种草莓，需要美观）"></textarea></div>
+            <div style="display:flex;justify-content:space-between;margin-top:20px;"><button class="btn btn-outline" id="btn4Back">← 返回</button><button class="btn btn-filled" id="btn4Next">生成工程图纸 →</button></div>
+        </div>
+
+        <!-- 环节5 -->
+        <div class="stage-panel" id="stage5">
+            <div class="stage-title">5 · 工程图纸</div>
+            <div class="blueprint-wrapper"><canvas id="blueprintCanvas" width="900" height="600"></canvas></div>
+            <div style="display:flex;justify-content:space-between;margin-top:20px;"><button class="btn btn-outline" id="btn5Back">← 返回</button><button class="btn btn-filled" id="btnSave">💾 保存图纸</button></div>
+        </div>
+
+        <div class="gallery-section" id="gallerySection" style="margin-top:24px;background:white;border-radius:18px;padding:20px;display:none;">
+            <h3>📐 设计方案图库</h3><div class="gallery-grid" id="galleryGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const vegs = [
+                { id: 'lettuce', name: '生菜', icon: '🥬', rec: true }, { id: 'tomato', name: '番茄', icon: '🍅', rec: false,
+                    warn: '生长周期长，易患病' },
+                { id: 'scallion', name: '小葱', icon: '🧅', rec: true }, { id: 'garlic', name: '蒜苗', icon: '🧄', rec: true },
+                { id: 'cucumber', name: '黄瓜', icon: '🥒', rec: false, warn: '需要攀爬支架' }, { id: 'cilantro', name: '香菜',
+                    icon: '🌿', rec: true },
+                { id: 'pakchoi', name: '小白菜', icon: '🥬', rec: true }, { id: 'pumpkin', name: '南瓜', icon: '🎃', rec: false,
+                    warn: '藤蔓旺盛占地大' },
+                { id: 'spinach', name: '菠菜', icon: '🥬', rec: true }, { id: 'chives', name: '韭菜', icon: '🌱', rec: true },
+                { id: 'potato', name: '土豆', icon: '🥔', rec: false, warn: '需较深土层' }, { id: 'sprouts', name: '芽苗菜',
+                    icon: '🌱', rec: true },
+                { id: 'mint', name: '薄荷', icon: '🌿', rec: true }, { id: 'broccoli', name: '西兰花', icon: '🥦', rec: false,
+                    warn: '植株较大占用空间多' },
+                { id: 'basil', name: '罗勒', icon: '🌱', rec: true }, { id: 'strawberry', name: '草莓', icon: '🍓',
+                rec: true }, { id: 'pepper', name: '辣椒', icon: '🌶️', rec: true }
+            ];
+            const allContainers = [
+                { id: 'bottle', name: '矿泉水瓶', icon: '🧴', w: 8, d: 8, sz: 22 }, { id: 'cup', name: '奶茶杯', icon: '🥤', w: 9,
+                    d: 9, sz: 24 },
+                { id: 'detergent', name: '洗衣液瓶', icon: '🧴', w: 12, d: 8, sz: 26 }, { id: 'foam', name: '泡沫箱',
+                    icon: '📦', w: 40, d: 30, sz: 60 },
+                { id: 'egg_carton', name: '鸡蛋托', icon: '🥚', w: 30, d: 20, sz: 45 }, { id: 'plastic_pot', name: '塑料花盆',
+                    icon: '🪴', w: 20, d: 20, sz: 35 },
+                { id: 'ceramic_pot', name: '陶瓷花盆', icon: '🪴', w: 22, d: 22, sz: 38 }, { id: 'milk_can', name: '奶粉罐',
+                    icon: '🥫', w: 15, d: 15, sz: 30 }
+            ];
+            const frames = [
+                { id: 'a_frame', name: 'A型支架', w: 120, d: 80, h: 180 }, { id: 'h_frame', name: 'H型支架', w: 140, d: 60,
+                    h: 200 }
+            ];
+
+            let state = {
+                stage: 1,
+                vegs: [],
+                wrongVegs: [],
+                mats: [],
+                frameStyles: [],
+                rackInstances: [],
+                layout: [],
+                placedContainers: [],
+                waterSource: null,
+                waterPlaced: null,
+                suppNote: '',
+                designs: [],
+                signature: null
+            };
+            const $ = s => document.querySelector(s);
+
+            function toast(msg) { const t = $('#toast');
+                t.textContent = msg;
+                t.classList.add('show');
+                clearTimeout(t._timer);
+                t._timer = setTimeout(() => t.classList.remove('show'), 2000); }
+
+            function updateSteps() { const s = state.stage;
+                document.querySelectorAll('.step-circle').forEach(c => { const st = parseInt(c.dataset.step);
+                    c.classList.remove('active', 'done'); if (st === s) c.classList.add('active');
+                else if (st < s) c.classList.add('done') }); }
+            window.goToStage = function(stage) {
+                state.stage = stage;
+                document.querySelectorAll('.stage-panel').forEach(p => p.classList.remove('visible'));
+                document.getElementById('stage' + stage)?.classList.add('visible');
+                updateSteps(); if (stage === 2) renderStage2(); if (stage === 3) renderStage3(); if (stage ===
+                    4) initStage4(); if (stage === 5) renderStage5();
+                updateBtns();
+                $('#gallerySection').style.display = stage === 5 ? 'block' : 'none';
+            };
+
+            function updateBtns() { $('#btn2Next').disabled = state.vegs.length === 0;
+                $('#btn3Next').disabled = state.mats.length === 0 || state.frameStyles.length === 0; }
+
+            function renderStage2() {
+                $('#vegGrid').innerHTML = vegs.map(v => { const sel = state.vegs.includes(v.id),
+                        w = state.wrongVegs.includes(v.id);
+                        let cls = ''; if (sel && w) cls = ' wrong-match'; else if (sel) cls = ' selected'; return `<div class="option-card${cls}" onclick="toggleVeg('${v.id}')"><div class="card-icon">${v.icon}</div><div class="card-name">${v.name}</div></div>`; })
+                    .join('');
+                updateVegSummary();
+                updateBtns();
+            }
+            window.toggleVeg = function(id) {
+                const v = vegs.find(x => x.id === id); if (!v) return;
+                const idx = state.vegs.indexOf(id); if (idx >= 0) { state.vegs.splice(idx, 1);
+                    const wi = state.wrongVegs.indexOf(id); if (wi >= 0) state.wrongVegs.splice(wi, 1);
+                    renderStage2(); return; } if (state.vegs.length >= 15) { toast('最多选15种');
+                    return; } if (!v.rec) { const reason = v.warn || '可能不适合阳台种植。';
+                    showConfirm(`“${v.name}”不适合阳台种植：${reason} 仍要选择吗？`, () => { state.vegs.push(id);
+                        state.wrongVegs.push(id);
+                        renderStage2(); }); } else { state.vegs.push(id);
+                    renderStage2(); }
+            };
+
+            function showConfirm(msg, cb) { const ov = document.createElement('div');
+                ov.className = 'alert-dialog';
+                ov.innerHTML =
+                    `<p>${msg}</p><button class="btn btn-outline" id="c1">取消</button><button class="btn btn-filled" id="c2">仍要选择</button>`;
+                document.body.appendChild(ov);
+                ov.querySelector('#c1').onclick = () => ov.remove();
+                ov.querySelector('#c2').onclick = () => { ov.remove();
+                    cb(); }; }
+
+            function updateVegSummary() { const s = $('#vegSummary'); if (state.vegs.length) { s.style.display =
+            'flex';
+                    $('#vegChips').innerHTML = state.vegs.map(id => { const v = vegs.find(x => x.id === id); return `<span class="summary-chip">${v?.icon}${v?.name}</span>`; })
+                    .join(''); } else s.style.display = 'none'; }
+
+            function renderStage3() {
+                $('#matGrid3').innerHTML = allContainers.map(m => { const sel = state.mats.includes(m.id); return `<div class="option-card${sel?' selected':''}" onclick="toggleItem3('mats','${m.id}')"><div class="card-icon">${m.icon}</div><div class="card-name">${m.name}</div><div class="card-desc">${m.w}×${m.d}cm</div></div>`; })
+                    .join('');
+                $('#frameGrid3').innerHTML = frames.map(f =>
+                    `<div class="option-card${state.frameStyles.includes(f.id)?' selected':''}" onclick="toggleItem3('frameStyles','${f.id}')"><div class="card-icon">${f.id==='a_frame'?'△':'▮'}</div><div class="card-name">${f.name}</div><div class="card-desc">最大尺寸 ${f.w}×${f.d}×${f.h}cm</div></div>`
+                    ).join('');
+                renderCalc();
+                updateBtns();
+            }
+            window.toggleItem3 = function(list, id) { const arr = state[list];
+                const idx = arr.indexOf(id); if (idx >= 0) { arr.splice(idx, 1); if (list === 'mats') { state
+                        .rackInstances.forEach(ri => { if (ri.containers) delete ri.containers[
+                            id
+                            ]; if (ri.layerPlan) { Object.values(ri.layerPlan).forEach(
+                                layer => { if (layer && layer[id] !== undefined) delete layer[
+                                    id]; }); } }); } } else { arr.push(id); }
+                state.rackInstances = state.rackInstances.filter(ri => state.frameStyles.includes(ri.fid));
+                renderStage3(); };
+
+            function renderCalc() {
+                const area = $('#calcArea');
+                if (!state.frameStyles.length || !state.mats.length) { area.innerHTML = '';
+                    return; }
+                let html = '';
+                state.frameStyles.forEach(fid => {
+                    const existingCount = state.rackInstances.filter(ri => ri.fid === fid).length || 1;
+                    const f = frames.find(x => x.id === fid);
+                    html +=
+                        `<div class="rack-inst-block"><strong>${f.name}</strong>（最大尺寸 ${f.w}×${f.d}×${f.h}cm） 数量:<input id="cnt_${fid}" value="${existingCount}" style="width:60px;" onchange="updateCount('${fid}')"> <span style="color:#888;">选定数量后点击空白处刷新</span><div id="inst_${fid}"></div></div>`;
+                });
+                area.innerHTML = html;
+                state.frameStyles.forEach(fid => updateCount(fid));
+            }
+
+            window.updateCount = function(fid) {
+                const count = parseInt($('#cnt_' + fid).value) || 0;
+                const oldInstances = state.rackInstances.filter(ri => ri.fid === fid);
+                state.rackInstances = state.rackInstances.filter(ri => ri.fid !== fid);
+                for (let i = 0; i < count; i++) {
+                    const existing = oldInstances.find(ri => ri.idx === i);
+                    if (existing) { state.rackInstances.push({ ...existing, fid, idx: i }); } else { state
+                            .rackInstances.push({ fid, idx: i, levels: 2, mat: 'metal', containers: {},
+                                layerPlan: {} }); }
+                }
+                const container = document.getElementById('inst_' + fid);
+                if (!container) return;
+                let html = '';
+                for (let i = 0; i < count; i++) {
+                    const inst = state.rackInstances.find(ri => ri.fid === fid && ri.idx === i) || { containers: {},
+                        layerPlan: {}, levels: 2, mat: 'metal' };
+                    const key = `${fid}_${i}`;
+                    const levels = inst.levels || 2;
+                    html +=
+                        `<div style="margin:10px 0;padding:10px;background:#fff;border-radius:8px;">
+        <strong>第${i+1}个${frames.find(x=>x.id===fid)?.name||''}</strong><br>
+        层数：<select id="lev_${key}" onchange="updateInstAndLayers('${fid}',${i})">${[2,3,4,5].map(l=>`<option value="${l}" ${l===levels?'selected':''}>${l}层</option>`).join('')}</select>
+        材质：<select id="mat_${key}" onchange="updateInst('${fid}',${i})">${['metal','plastic','wood'].map(m=>`<option value="${m}" ${m===inst.mat?'selected':''}>${m==='metal'?'金属':m==='plastic'?'PVC':'木质'}</option>`).join('')}</select>
+        <br><div class="container-row">`;
+                    state.mats.forEach(mid => { const m = allContainers.find(x => x.id === mid);
+                        const val = inst.containers[mid] || 0;
+                        html +=
+                            `<span class="container-item">${m.icon}${m.name}:<input id="mc_${key}_${mid}" value="${val}" style="width:45px;" onchange="updateInst('${fid}',${i})"></span>`; });
+                    html +=
+                        `</div><div style="margin-top:8px;"><strong>本支架放置容器总数：</strong><span id="total_${key}">0</span> 个</div><div style="margin-top:6px;"><strong>每层摆放计划（从下往上）：</strong></div>`;
+                    const usedContainers = Object.entries(inst.containers).filter(([mid, cnt]) => cnt > 0).map(
+                        ([mid]) => mid);
+                    if (usedContainers.length === 0) { html +=
+                            `<div style="color:#999;">请先在上方为支架分配容器数量</div>`; }
+                    for (let l = 1; l <= levels; l++) {
+                        html += `<div class="layer-plan-row"><strong>第${l}层：</strong>`;
+                        if (usedContainers.length === 0) { html +=
+                                `<span style="color:#aaa;">暂无可用容器</span>`; } else { usedContainers
+                                .forEach(mid => { const m = allContainers.find(x => x.id === mid);
+                                    const layerData = inst.layerPlan && inst.layerPlan[l] ? (inst
+                                        .layerPlan[l][mid] || 0) : 0;
+                                    html +=
+                                        `<span>${m.icon}${m.name}<input id="layerMat_${key}_${l}_${mid}" value="${layerData}" style="width:50px;" onchange="updateLayerPlanDetail('${fid}',${i},${l},'${mid}')"> 个</span>`; }); }
+                        html += `</div>`;
+                    }
+                    html += `</div>`;
+                }
+                container.innerHTML = html;
+                for (let i = 0; i < count; i++) { updateTotal(fid, i); }
+            };
+
+            window.updateInst = function(fid, idx) {
+                const inst = state.rackInstances.find(ri => ri.fid === fid && ri.idx === idx);
+                if (!inst) return;
+                inst.levels = parseInt($('#lev_' + fid + '_' + idx)?.value) || 2;
+                inst.mat = $('#mat_' + fid + '_' + idx)?.value || 'metal';
+                state.mats.forEach(mid => { const el = $('#mc_' + fid + '_' + idx + '_' + mid); if (el) inst.containers[
+                        mid] = parseInt(el.value) || 0; });
+                if (inst.layerPlan) { Object.keys(inst.layerPlan).forEach(l => { const layer = inst.layerPlan[
+                        l
+                        ]; if (layer) { Object.keys(layer).forEach(mid => { if (!(mid in inst
+                            .containers) || inst.containers[mid] <= 0) delete layer[
+                            mid]; }); if (Object.keys(layer).length === 0) delete inst
+                        .layerPlan[l]; } }); }
+                updateTotal(fid, idx);
+                renderCalc();
+            };
+            window.updateInstAndLayers = function(fid, idx) {
+                const inst = state.rackInstances.find(ri => ri.fid === fid && ri.idx === idx);
+                if (!inst) return;
+                inst.levels = parseInt($('#lev_' + fid + '_' + idx)?.value) || 2;
+                inst.mat = $('#mat_' + fid + '_' + idx)?.value || 'metal';
+                state.mats.forEach(mid => { const el = $('#mc_' + fid + '_' + idx + '_' + mid); if (el) inst.containers[
+                        mid] = parseInt(el.value) || 0; });
+                if (inst.layerPlan) { Object.keys(inst.layerPlan).forEach(l => { if (parseInt(l) > inst
+                        .levels) delete inst.layerPlan[l]; }); }
+                updateCount(fid);
+            };
+
+            function updateTotal(fid, idx) {
+                const inst = state.rackInstances.find(ri => ri.fid === fid && ri.idx === idx);
+                if (!inst) return;
+                let sum = 0;
+                Object.values(inst.containers || {}).forEach(c => sum += c);
+                const key = `${fid}_${idx}`;
+                const span = document.getElementById('total_' + key);
+                if (span) span.textContent = sum;
+            }
+            window.updateLayerPlanDetail = function(fid, idx, layer, mid) {
+                const inst = state.rackInstances.find(ri => ri.fid === fid && ri.idx === idx);
+                if (!inst) return;
+                if (!inst.layerPlan) inst.layerPlan = {};
+                if (!inst.layerPlan[layer]) inst.layerPlan[layer] = {};
+                const el = document.getElementById(`layerMat_${fid}_${idx}_${layer}_${mid}`);
+                inst.layerPlan[layer][mid] = parseInt(el?.value) || 0;
+                if (inst.layerPlan[layer][mid] === 0) delete inst.layerPlan[layer][mid];
+                if (Object.keys(inst.layerPlan[layer]).length === 0) delete inst.layerPlan[layer];
+            };
+
+            function initStage4() {
+                $('#containerTools').innerHTML = allContainers.map(m =>
+                    `<span class="toolbox-chip" draggable="true" ondragstart="dragStart(event)" id="dragMat_${m.id}">${m.icon}${m.name}</span>`
+                ).join('');
+                updateWaterTools();
+                if (!state.layout.length) autoInitLayout();
+                renderPlanCanvas();
+                bindCanvasEvents();
+                updateVegPreviewInStage4();
+            }
+
+            function updateVegPreviewInStage4() {
+                const container = $('#vegPreviewInStage4');
+                if (!container) return;
+                if (state.vegs.length) {
+                    container.innerHTML = state.vegs.map(id => { const v = vegs.find(x => x.id === id); return `<span class="summary-chip">${v?.icon}${v?.name}</span>`; })
+                        .join('');
+                } else {
+                    container.innerHTML = '<span style="color:#999;">未选择蔬菜</span>';
+                }
+            }
+            window.dragStart = function(ev) { ev.dataTransfer.setData("text", ev.target.id); };
+            window.addRackToCanvas = function(fid) { state.layout.push({ fid, idx: state.layout.length, x: 50 + Math.random() *
+                    200, y: 60 + Math.random() * 150 });
+                renderPlanCanvas(); };
+
+            function autoInitLayout() { state.layout = [];
+                state.rackInstances.forEach(ri => state.layout.push({ fid: ri.fid, idx: ri.idx, x: 40 + Math.random() * 200,
+                    y: 60 + Math.random() * 150 })); }
+
+            function getRackSummary(inst) {
+                if (!inst) return '无数据';
+                const f = frames.find(x => x.id === inst.fid) || { name: '?' };
+                const matName = { metal: '金属', plastic: 'PVC', wood: '木质' };
+                let info = `${f.name} · ${matName[inst.mat]||inst.mat} · ${inst.levels||2}层`;
+                const used = Object.entries(inst.containers || {}).filter(([m, c]) => c > 0);
+                if (used.length === 0) return info + ' (空支架)';
+                let total = 0;
+                used.forEach(([m, c]) => total += c);
+                info += ` · 共${total}个容器`;
+                if (inst.layerPlan && Object.keys(inst.layerPlan).length > 0) {
+                    let layers = [];
+                    for (let l = 1; l <= (inst.levels || 2); l++) {
+                        const plan = inst.layerPlan[l];
+                        if (plan && Object.values(plan).some(v => v > 0)) {
+                            let parts = [];
+                            Object.entries(plan).forEach(([mid, cnt]) => { if (cnt > 0) { const m = allContainers
+                                    .find(x => x.id === mid);
+                                    parts.push(`${m?.icon||''}×${cnt}`); } });
+                            if (parts.length) layers.push(`第${l}层: ${parts.join(' ')}`);
+                        }
+                    }
+                    if (layers.length) info += '\n' + layers.join('\n');
+                } else {
+                    let parts = used.map(([mid, cnt]) => { const m = allContainers.find(x => x.id === mid); return `${m?.icon||''}×${cnt}`; });
+                    info += '\n' + parts.join(' ');
+                }
+                return info;
+            }
+
+            function renderPlanCanvas() {
+                const canvas = $('#planCanvas'),
+                    ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, 800, 500);
+                ctx.fillStyle = '#fdfcf8';
+                ctx.fillRect(0, 0, 800, 500);
+                ctx.strokeStyle = '#888';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(20, 20, 760, 460);
+                ctx.fillStyle = '#333';
+                ctx.font = '16px sans-serif';
+                ctx.fillText('窗户（南）', 360, 40);
+                let infoHtml = '';
+                state.layout.forEach((item, idx) => {
+                    const f = frames.find(x => x.id === item.fid);
+                    if (!f) return;
+                    const scale = 1.3,
+                        sw = f.w * scale,
+                        sd = f.d * scale;
+                    const inst = state.rackInstances.find(ri => ri.fid === item.fid && ri.idx === item.idx);
+                    const isEmpty = !inst || Object.values(inst.containers || {}).every(c => c === 0);
+                    if (f.id === 'a_frame') {
+                        ctx.fillStyle = '#e8dcc8';
+                        ctx.beginPath();
+                        ctx.moveTo(item.x, item.y + sd);
+                        ctx.lineTo(item.x + sw, item.y + sd);
+                        ctx.lineTo(item.x + sw / 2, item.y);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.strokeStyle = '#666';
+                        ctx.stroke();
+                        ctx.fillStyle = '#333';
+                        ctx.font = 'bold 11px sans-serif';
+                        ctx.fillText(`${f.name}${idx+1}`, item.x + 5, item.y + 15);
+                        if (isEmpty) { ctx.fillStyle = '#c0392b';
+                            ctx.fillText('空', item.x + sw / 2 - 8, item.y + sd / 2); }
+                    } else {
+                        ctx.fillStyle = '#e8dcc8';
+                        ctx.fillRect(item.x, item.y, sw, sd);
+                        ctx.strokeStyle = '#666';
+                        ctx.strokeRect(item.x, item.y, sw, sd);
+                        ctx.fillStyle = '#333';
+                        ctx.font = 'bold 11px sans-serif';
+                        ctx.fillText(`${f.name}${idx+1}`, item.x + 5, item.y + 15);
+                        if (isEmpty) { ctx.fillStyle = '#c0392b';
+                            ctx.fillText('空', item.x + sw / 2 - 8, item.y + sd / 2); }
+                    }
+                    infoHtml +=
+                        `<div class="rack-info-item">${getRackSummary(inst).replace(/\n/g,'<br>')}</div>`;
+                });
+                state.placedContainers.forEach(pc => { const m = allContainers.find(x => x.id === pc.matId);
+                    if (!m) return;
+                    ctx.font = `${m.sz}px sans-serif`;
+                    ctx.fillStyle = '#333';
+                    ctx.fillText(m.icon, pc.x - m.sz / 2, pc.y + m.sz / 3); });
+                if (state.waterPlaced) { ctx.fillStyle = '#a0d0ff';
+                    ctx.fillRect(state.waterPlaced.x - 30, state.waterPlaced.y - 30, 60, 60);
+                    ctx.font = '30px sans-serif';
+                    ctx.fillStyle = '#333';
+                    ctx.fillText('💧', state.waterPlaced.x - 15, state.waterPlaced.y + 10); }
+                $('#rackInfoPanel').innerHTML = infoHtml || '<div style="color:#999;">暂无支架</div>';
+            }
+
+            function bindCanvasEvents() {
+                const canvas = $('#planCanvas');
+                canvas.onmousedown = function(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const mx = e.clientX - rect.left,
+                        my = e.clientY - rect.top;
+                    let found = null;
+                    for (let i = state.placedContainers.length - 1; i >= 0; i--) { const pc = state.placedContainers[
+                            i
+                        ];
+                        const m = allContainers.find(x => x.id === pc.matId); if (!m) continue; if (Math.abs(mx - pc
+                            .x) < m.sz / 2 && Math.abs(my - pc.y) < m.sz / 2) { found = { type: 'container',
+                            idx: i }; break; } }
+                    if (!found && state.waterPlaced && Math.abs(mx - state.waterPlaced.x) < 30 && Math.abs(my - state
+                            .waterPlaced.y) < 30) { found = { type: 'water' }; }
+                    if (!found) { for (let i = state.layout.length - 1; i >= 0; i--) { const item = state.layout[i];
+                            const f = frames.find(x => x.id === item.fid); if (!f) continue; if (mx >= item.x && mx <=
+                                item.x + f.w * 1.3 && my >= item.y && my <= item.y + f.d * 1.3) { found = { type: 'rack',
+                                idx: i }; break; } } }
+                    if (found) {
+                        state.dragging = found;
+                        state.dragStartTime = Date.now();
+                        if (found.type === 'rack') { state.dragOX = mx - state.layout[found.idx].x;
+                            state.dragOY = my - state.layout[found.idx].y; } else if (found.type === 'container') { state
+                            .dragOX = mx - state.placedContainers[found.idx].x;
+                            state.dragOY = my - state.placedContainers[found.idx].y; } else { state.dragOX = mx -
+                            state.waterPlaced.x;
+                            state.dragOY = my - state.waterPlaced.y; }
+                    }
+                };
+                canvas.onmousemove = function(e) {
+                    if (!state.dragging) return;
+                    const rect = canvas.getBoundingClientRect();
+                    const mx = e.clientX - rect.left,
+                        my = e.clientY - rect.top;
+                    if (state.dragging.type === 'rack') { const item = state.layout[state.dragging.idx];
+                        item.x = mx - state.dragOX;
+                        item.y = my - state.dragOY; } else if (state.dragging.type === 'container') { const pc = state
+                        .placedContainers[state.dragging.idx];
+                        pc.x = mx - state.dragOX;
+                        pc.y = my - state.dragOY; } else { state.waterPlaced.x = mx - state.dragOX;
+                        state.waterPlaced.y = my - state.dragOY; }
+                    renderPlanCanvas();
+                };
+                canvas.onmouseup = function() {
+                    if (state.dragging && Date.now() - state.dragStartTime > 800) {
+                        if (state.dragging.type === 'container') { const idx = state.dragging.idx;
+                            showConfirm('确定删除这个容器吗？', () => { state.placedContainers.splice(idx, 1);
+                                renderPlanCanvas(); }); } else if (state.dragging.type === 'water') { showConfirm(
+                                '确定删除水源吗？', () => { state.waterPlaced = null;
+                                renderPlanCanvas(); }); }
+                    }
+                    state.dragging = null;
+                };
+                canvas.addEventListener('dragover', e => e.preventDefault());
+                canvas.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    const id = e.dataTransfer.getData("text");
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left,
+                        y = e.clientY - rect.top;
+                    if (id.startsWith('dragMat_')) { state.placedContainers.push({ matId: id.replace('dragMat_',
+                            ''), x, y }); } else if (id.startsWith('dragWater')) { state.waterPlaced = { x, y }; }
+                    renderPlanCanvas();
+                });
+            }
+            window.updateWaterSource = function(src) {
+                state.waterSource = src; if (src === 'far') { if (!state.waterPlaced) state.waterPlaced = { x: 650,
+                        y: 380 };
+                    toast('远水源已自动添加储水桶。'); } else { state.waterPlaced = null; }
+                updateWaterTools();
+                renderPlanCanvas();
+            };
+
+            function updateWaterTools() { $('#waterTools').innerHTML = state.waterSource === 'far' ?
+                    '<span class="toolbox-chip" draggable="true" ondragstart="dragStart(event)" id="dragWater">🪣储水桶</span>' :
+                    ''; }
+
+            function renderStage5() {
+                const canvas = $('#blueprintCanvas'),
+                    ctx = canvas.getContext('2d'),
+                    w = 900,
+                    h = 600;
+                ctx.fillStyle = '#e8f0f8';
+                ctx.fillRect(0, 0, w, h);
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(25, 25, w - 50, h - 50);
+                ctx.strokeStyle = '#1a3a5c';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(25, 25, w - 50, h - 50);
+                ctx.fillStyle = '#1a3a5c';
+                ctx.fillRect(w - 320, h - 70, 280, 38);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillText('阳台小菜园·方案图纸', w - 310, h - 48);
+                ctx.fillStyle = '#1a3a5c';
+                ctx.font = '13px sans-serif';
+                ctx.fillText('比例尺 1:3 (cm)', 45, h - 50);
+                ctx.strokeStyle = '#1a3a5c';
+                ctx.beginPath();
+                ctx.moveTo(45, h - 60);
+                ctx.lineTo(45, h - 40);
+                ctx.lineTo(190, h - 40);
+                ctx.lineTo(190, h - 60);
+                ctx.stroke();
+                for (let i = 0; i <= 5; i++) { const x = 45 + i * 30;
+                    ctx.beginPath();
+                    ctx.moveTo(x, h - 60);
+                    ctx.lineTo(x, h - 40);
+                    ctx.stroke();
+                    ctx.fillText(i * 50, x + 2, h - 25); }
+                state.layout.forEach((item, idx) => { const f = frames.find(x => x.id === item.fid);
+                    if (!f) return;
+                    const px = 75 + item.x * 0.7,
+                        py = 60 + item.y * 0.7; const sw = f.w * 0.7,
+                        sd = f.d * 0.7;
+                    ctx.fillStyle = '#f8f4e8';
+                    ctx.strokeStyle = '#1a3a5c';
+                    ctx.lineWidth = 2; if (f.id === 'a_frame') { ctx.beginPath();
+                        ctx.moveTo(px, py + sd);
+                        ctx.lineTo(px + sw, py + sd);
+                        ctx.lineTo(px + sw / 2, py);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke(); } else { ctx.fillRect(px, py, sw, sd);
+                        ctx.strokeRect(px, py, sw, sd); }
+                    ctx.fillStyle = '#1a3a5c';
+                    ctx.fillText(`${f.name}#${idx+1}`, px + 5, py - 5); });
+                state.placedContainers.forEach(pc => { const m = allContainers.find(x => x.id === pc.matId);
+                    if (!m) return;
+                    ctx.font = '38px sans-serif';
+                    ctx.fillStyle = '#1a3a5c';
+                    ctx.fillText(m.icon, 75 + pc.x * 0.7 - 18, 60 + pc.y * 0.7 + 14); });
+                if (state.waterPlaced) { ctx.fillStyle = '#a0d0ff';
+                    ctx.fillRect(75 + state.waterPlaced.x * 0.7 - 20, 60 + state.waterPlaced.y * 0.7 - 20, 40, 40);
+                    ctx.fillText('💧', 75 + state.waterPlaced.x * 0.7 - 8, 60 + state.waterPlaced.y * 0.7 + 10); }
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(w - 340, 50, 300, 90);
+                ctx.strokeStyle = '#1a3a5c';
+                ctx.setLineDash([5, 5]);
+                ctx.strokeRect(w - 340, 50, 300, 90);
+                ctx.setLineDash([]);
+                if (state.signature) { const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, w - 335, 55, 290, 80); };
+                    img.src = state.signature; } else { ctx.fillStyle = '#aaa';
+                    ctx.font = '16px sans-serif';
+                    ctx.fillText('设计师签名 (点击)', w - 330, 100); }
+                canvas.onclick = function(e) { const rect = canvas.getBoundingClientRect();
+                    const mx = e.clientX - rect.left,
+                        my = e.clientY - rect.top; if (mx >= w - 340 && mx <= w - 40 && my >= 50 && my <= 140)
+                        showSignatureModal(); };
+            }
+
+            function showSignatureModal() { const modal = document.createElement('div');
+                modal.className = 'signature-modal';
+                modal.innerHTML =
+                    `<div class="signature-box"><h3>✍️ 设计师签名</h3><canvas id="sigCanvas" width="300" height="120" style="border:2px solid #ccc;"></canvas><br><button class="btn btn-outline" id="clearSig">清除</button><button class="btn btn-filled" id="confirmSig">确认</button><button class="btn btn-outline" id="cancelSig">取消</button></div>`;
+                document.body.appendChild(modal);
+                const sc = modal.querySelector('#sigCanvas'),
+                    sctx = sc.getContext('2d');
+                let drawing = false;
+                sc.addEventListener('mousedown', e => { drawing = true;
+                    sctx.beginPath();
+                    sctx.moveTo(e.offsetX, e.offsetY); });
+                sc.addEventListener('mousemove', e => { if (!drawing) return;
+                    sctx.lineTo(e.offsetX, e.offsetY);
+                    sctx.stroke(); });
+                sc.addEventListener('mouseup', () => { drawing = false; });
+                modal.querySelector('#clearSig').onclick = () => sctx.clearRect(0, 0, 300, 120);
+                modal.querySelector('#cancelSig').onclick = () => modal.remove();
+                modal.querySelector('#confirmSig').onclick = () => { state.signature = sc.toDataURL();
+                    modal.remove();
+                    renderStage5(); }; }
+
+            window.saveDesign = function() {
+                const dataUrl = $('#blueprintCanvas').toDataURL('image/png');
+                const designName = `方案${state.designs.length+1}`;
+                state.designs.unshift({ id: Date.now() + '', img: dataUrl, name: designName });
+                renderGallery();
+                toast(`“${designName}”已保存`);
+            };
+            window.renameDesign = function(id) { const d = state.designs.find(x => x.id === id);
+                if (!d) return;
+                const newName = prompt('请输入新名称：', d.name || ''); if (newName && newName.trim()) { d.name = newName.trim();
+                    renderGallery();
+                    toast('已重命名'); } };
+            window.deleteDesign = function(id) { state.designs = state.designs.filter(d => d.id !== id);
+                renderGallery(); };
+
+            function renderGallery() {
+                const g = $('#galleryGrid');
+                if (!state.designs.length) { g.innerHTML =
+                        '<div style="color:#aaa;padding:20px;">保存图纸后出现。</div>'; return; }
+                g.innerHTML = state.designs.map(d => `
+              <div class="design-card">
+                <div class="design-label"><span>${d.name||'未命名'}</span> <span style="font-size:0.8rem;color:#888;">${new Date(parseInt(d.id)).toLocaleString()}</span></div>
+                <img src="${d.img}" style="width:100%;height:160px;object-fit:cover;">
+                <div class="card-btns">
+                  <button onclick="openAI('${d.id}')" class="btn btn-outline" style="padding:8px 14px;font-size:0.9rem;">🤖 AI分析</button>
+                  <button onclick="renameDesign('${d.id}')" class="btn btn-outline" style="padding:6px 10px;font-size:0.8rem;">✏️ 重命名</button>
+                  <button onclick="deleteDesign('${d.id}')" class="btn btn-outline" style="padding:6px 10px;font-size:0.8rem;color:#c55;">🗑️ 删除</button>
+                </div>
+              </div>
+            `).join('');
+            }
+
+            window.openAI = function(id) {
+                const d = state.designs.find(x => x.id === id);
+                if (!d) return;
+                let totalRacks = state.rackInstances.length,
+                    totalArea = 0,
+                    maxH = 0,
+                    totalContainers = 0;
+                const usedMaterialsInRacks = new Set();
+                const containerMismatches = [];
+                state.rackInstances.forEach(ri => {
+                    const f = frames.find(x => x.id === ri.fid);
+                    if (!f) return;
+                    totalArea += f.w * f.d / 10000;
+                    maxH = Math.max(maxH, f.h);
+                    const containerCount = {};
+                    Object.entries(ri.containers || {}).forEach(([mid, cnt]) => { if (cnt > 0) { totalContainers +=
+                            cnt;
+                            usedMaterialsInRacks.add(mid);
+                            containerCount[mid] = cnt; } });
+                    if (ri.layerPlan) {
+                        let planSum = {};
+                        Object.values(ri.layerPlan).forEach(layer => { if (layer) Object.entries(layer)
+                            .forEach(([mid, cnt]) => { if (cnt > 0) planSum[mid] = (planSum[mid] || 0) +
+                                cnt; }); });
+                        Object.keys(containerCount).forEach(mid => { const planned = planSum[mid] || 0; if (
+                                planned !== containerCount[mid]) { const m = allContainers.find(x => x
+                                    .id === mid);
+                                containerMismatches.push(
+                                    `${m?.icon||''}${m?.name||mid}: 总计${containerCount[mid]}个, 层计划总和${planned}个`)
+                                    ; } });
+                    }
+                });
+                const wrongVegs = state.vegs.filter(v => !vegs.find(x => x.id === v)?.rec);
+                const highlights = [],
+                    suggestions = [];
+                const BALCONY_AREA = 8,
+                    BALCONY_H = 200;
+                if (totalContainers === 0) suggestions.push('⚠️ 所有支架均未放置容器！请返回步骤3分配。');
+                if (totalRacks >= 5) suggestions.push(`支架数量${totalRacks}个偏多，建议精简。`);
+                if (totalArea > BALCONY_AREA) suggestions.push(
+                    `支架占地${totalArea.toFixed(1)}㎡超出阳台面积。`);
+                if (maxH > BALCONY_H) suggestions.push(`支架高度${maxH}cm超出。`);
+                if (wrongVegs.length) suggestions.push(
+                    `不适合的蔬菜：${wrongVegs.map(v=>vegs.find(x=>x.id===v)?.name).join('、')}`);
+                const unusedMats = state.mats.filter(mid => !usedMaterialsInRacks.has(mid));
+                if (unusedMats.length) suggestions.push(
+                    `闲置容器：${unusedMats.map(mid=>{const m=allContainers.find(x=>x.id===mid);return m?m.icon+m.name:mid;}).join('、')}`);
+                if (containerMismatches.length) suggestions.push(
+                    `⚠️ 容器数量与层计划不一致：${containerMismatches.join('；')}`);
+                if (state.waterSource === 'far' && !state.waterPlaced) suggestions.push('远水源未放置储水桶。');
+                if (state.vegs.length > 8 && totalContainers < 15) suggestions.push('蔬菜种类多但容器少。');
+
+                if (state.suppNote && state.suppNote.length > 5) {
+                    const note = state.suppNote;
+                    const vegNames = vegs.map(v => v.name);
+                    const mentionedVegs = vegNames.filter(name => note.includes(name));
+                    if (mentionedVegs.length > 0) {
+                        const selectedMentioned = mentionedVegs.filter(name => state.vegs.some(vid => vegs.find(v =>
+                            v.id === vid)?.name === name));
+                        const unselectedMentioned = mentionedVegs.filter(name => !selectedMentioned.includes(
+                        name));
+                        if (selectedMentioned.length) highlights.push(
+                            `你提到了“${selectedMentioned.join('、')}”，这些蔬菜已在你的选择中，规划很完整。`);
+                        if (unselectedMentioned.length) suggestions.push(
+                            `你提到了“${unselectedMentioned.join('、')}”，但尚未选择，建议返回步骤2添加。`);
+                    }
+                    const positionKeywords = ['窗户边', '墙角', '角落', '中间', '靠墙', '南侧', '北侧', '上层', '下层',
+                    '地面', '悬挂'];
+                    const mentionedPositions = positionKeywords.filter(kw => note.includes(kw));
+                    if (mentionedPositions.length) highlights.push(
+                        `你对种植位置有具体想法（提到了“${mentionedPositions.join('、')}”），这有助于合理布局。`);
+                    if (!mentionedVegs.length && !mentionedPositions.length) {
+                        highlights.push(`补充说明记录了你的思考：“${note.substring(0,30)}…”，让方案更加个性化。`);
+                    }
+                }
+
+                if (highlights.length === 0) {
+                    if (state.vegs.length > 0) highlights.push('你选择了蔬菜，迈出了阳台种植的第一步。');
+                    else if (state.mats.length > 0) highlights.push('你挑选了容器，为种植做好了准备。');
+                    else highlights.push('你开启了阳台小菜园设计，继续完善吧。');
+                }
+
+                let starCount = highlights.length + Math.max(0, 4 - suggestions.length);
+                if (totalContainers === 0) starCount = Math.min(starCount, 2);
+                if (containerMismatches.length) starCount = Math.max(0, starCount - containerMismatches.length);
+                let stars = '';
+                if (starCount >= 8) stars = '★★★★★';
+                else if (starCount >= 6) stars = '★★★★';
+                else if (starCount >= 4) stars = '★★★';
+                else if (starCount >= 2) stars = '★★';
+                else stars = '★★';
+                let comment = stars === '★★★★★' ? '非常出色！' : stars === '★★★★' ? '很不错！' : stars === '★★★' ? '有亮点。' :
+                    stars === '★★' ? '需调整。' : '问题较多，继续改进。';
+                let tips = ['高植物放上层，矮植物放下层。', '每周检查虫害。', '洗米水是天然肥料。'];
+                const ov = document.createElement('div');
+                ov.style.cssText =
+                    'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;';
+                const pn = document.createElement('div');
+                pn.style.cssText =
+                    'background:white;border-radius:18px;padding:28px;max-width:680px;width:94%;max-height:85vh;overflow-y:auto;font-size:1.05rem;line-height:1.8;';
+                pn.innerHTML =
+                    `<h3>🤖 AI多维度分析报告</h3><p>阳台8㎡ | 支架${totalRacks}个 | 容器${totalContainers}个 | 占地${totalArea.toFixed(1)}㎡</p><h3>总体评价：${stars} ${comment}</h3><div style="background:#f6fdf4;padding:14px;border-radius:10px;margin-bottom:10px;"><strong>✅ 亮点</strong><ul>${highlights.map(h=>`<li>${h}</li>`).join('')}</ul></div><div style="background:#fff8f5;padding:14px;border-radius:10px;margin-bottom:10px;"><strong>💡 改进建议</strong><ul>${suggestions.map(s=>`<li>${s}</li>`).join('')||'<li>暂无</li>'}</ul></div><div style="background:#f5f8ff;padding:14px;border-radius:10px;"><strong>🌟 种植小贴士</strong><ul>${tips.map(t=>`<li>${t}</li>`).join('')}</ul></div><button id="closeAI" class="btn btn-filled" style="margin-top:12px;">我知道了</button>`;
+                ov.appendChild(pn);
+                document.body.appendChild(ov);
+                pn.querySelector('#closeAI').onclick = () => ov.remove();
+                ov.onclick = e => { if (e.target === ov) ov.remove(); };
+            };
+
+            window.resetAll = function() { state.vegs = [];
+                state.wrongVegs = [];
+                state.mats = [];
+                state.frameStyles = [];
+                state.rackInstances = [];
+                state.layout = [];
+                state.placedContainers = [];
+                state.waterSource = null;
+                state.waterPlaced = null;
+                state.suppNote = '';
+                state.signature = null;
+                goToStage(1);
+                renderStage2();
+                renderStage3();
+                updateBtns(); };
+            $('#btnReset').onclick = resetAll;
+            $('#btn1Next').onclick = () => goToStage(2);
+            $('#btn2Back').onclick = () => goToStage(1);
+            $('#btn2Next').onclick = () => goToStage(3);
+            $('#btn3Back').onclick = () => goToStage(2);
+            $('#btn3Next').onclick = () => goToStage(4);
+            $('#btn4Back').onclick = () => goToStage(3);
+            $('#btn4Next').onclick = () => { state.suppNote = $('#suppNote').value;
+                goToStage(5); };
+            $('#btn5Back').onclick = () => goToStage(4);
+            $('#btnSave').onclick = saveDesign;
+            renderStage2();
+            renderStage3();
+            updateBtns();
+        })();
+    </script>
+</body>
+</html>
