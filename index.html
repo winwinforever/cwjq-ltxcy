@@ -454,7 +454,7 @@
         <div class="step-dot-wrapper"><div class="step-circle" data-step="5">5</div><div class="step-label">工程图纸</div></div>
     </div>
 
-    <!-- 环节1：阳台条件 -->
+    <!-- 环节1 -->
     <div class="stage-panel visible" id="stage1">
         <div class="stage-title">1 · 阳台条件</div>
         <div class="stage-subtitle">阳台长4米、宽2米、高2米，面积约8㎡，相当于一间小书房或一个稍大的卫生间。</div>
@@ -465,7 +465,7 @@
         <div style="text-align:right;margin-top:20px;"><button class="btn btn-filled" id="btn1Next">下一步：选择蔬菜 →</button></div>
     </div>
 
-    <!-- 环节2：选择蔬菜 -->
+    <!-- 环节2 -->
     <div class="stage-panel" id="stage2">
         <div class="stage-title">2 · 选择蔬菜种类</div>
         <div class="stage-subtitle">温馨提示：“根据常见、实用、易种、短周期选择”</div>
@@ -474,7 +474,7 @@
         <div style="display:flex;justify-content:space-between;margin-top:20px;"><button class="btn btn-outline" id="btn2Back">← 返回</button><button class="btn btn-filled" id="btn2Next" disabled>下一步：计算选材 →</button></div>
     </div>
 
-    <!-- 环节3：计算选材 -->
+    <!-- 环节3 -->
     <div class="stage-panel" id="stage3">
         <div class="stage-title">3 · 计算选材</div>
         <div class="stage-subtitle">阳台：400cm×200cm×200cm。支架尺寸为<strong>最大尺寸</strong>。<br>💡 <em>选好支架后，为每个支架分配容器数量，再为每一层安排具体容器。</em></div>
@@ -486,10 +486,10 @@
         <div style="display:flex;justify-content:space-between;margin-top:20px;"><button class="btn btn-outline" id="btn3Back">← 返回</button><button class="btn btn-filled" id="btn3Next" disabled>下一步：空间规划 →</button></div>
     </div>
 
-    <!-- 环节4：空间规划 -->
+    <!-- 环节4 -->
     <div class="stage-panel" id="stage4">
         <div class="stage-title">4 · 空间规划</div>
-        <div class="stage-subtitle">点击工具栏容器添加到画布；手指可拖拽图上支架和容器。</div>
+        <div class="stage-subtitle">拖拽支架和容器到阳台中。支架详情在左侧面板显示，空支架标注“空”。</div>
         <div style="display:flex;gap:20px;">
             <div class="toolbox">
                 <h4>🏗️ 支架</h4>
@@ -513,7 +513,7 @@
         <div style="display:flex;justify-content:space-between;margin-top:20px;"><button class="btn btn-outline" id="btn4Back">← 返回</button><button class="btn btn-filled" id="btn4Next">生成工程图纸 →</button></div>
     </div>
 
-    <!-- 环节5：工程图纸 -->
+    <!-- 环节5 -->
     <div class="stage-panel" id="stage5">
         <div class="stage-title">5 · 工程图纸</div>
         <div class="blueprint-wrapper"><canvas id="blueprintCanvas" width="900" height="600"></canvas></div>
@@ -538,8 +538,8 @@
         {id:'basil',name:'罗勒',icon:'🌱',rec:true},{id:'strawberry',name:'草莓',icon:'🍓',rec:true},{id:'pepper',name:'辣椒',icon:'🌶️',rec:true}
     ];
     const allContainers = [
-        {id:'bottle',name:'矿泉水瓶',icon:'🧴',w:8,d:8,sz:22},{id:'cup',name:'奶茶杯',icon:'🥤',w:9,d:9,sz:24},
-        {id:'detergent',name:'洗衣液瓶',icon:'🧴',w:12,d:8,sz:26},{id:'foam',name:'泡沫箱',icon:'📦',w:40,d:30,sz:60},
+        {id:'bottle',name:'矿泉水瓶',icon:'🧴',w:8,d:8,sz:24},{id:'cup',name:'奶茶杯',icon:'🥤',w:9,d:9,sz:24},
+        {id:'detergent',name:'洗衣液瓶',icon:'🧴',w:12,d:8,sz:28},{id:'foam',name:'泡沫箱',icon:'📦',w:40,d:30,sz:60},
         {id:'egg_carton',name:'鸡蛋托',icon:'🥚',w:30,d:20,sz:45},{id:'plastic_pot',name:'塑料花盆',icon:'🪴',w:20,d:20,sz:35},
         {id:'ceramic_pot',name:'陶瓷花盆',icon:'🪴',w:22,d:22,sz:38},{id:'milk_can',name:'奶粉罐',icon:'🥫',w:15,d:15,sz:30}
     ];
@@ -715,6 +715,8 @@
         ctx.strokeStyle='#1a3a5c';ctx.lineWidth=4;ctx.strokeRect(25,25,w-50,h-50);
         ctx.fillStyle='#1a3a5c';ctx.fillRect(w-320,h-70,280,38);ctx.fillStyle='#fff';ctx.font='bold 14px sans-serif';ctx.fillText('阳台小菜园·方案图纸',w-310,h-48);
         state.layout.forEach((item,idx)=>{const f=frames.find(x=>x.id===item.fid);if(!f)return;const px=75+item.x*0.7,py=60+item.y*0.7;ctx.fillStyle='#f8f4e8';ctx.strokeStyle='#1a3a5c';if(f.id==='a_frame'){ctx.beginPath();ctx.moveTo(px,py+f.d*0.7);ctx.lineTo(px+f.w*0.7,py+f.d*0.7);ctx.lineTo(px+f.w*0.35,py);ctx.closePath();ctx.fill();ctx.stroke();}else{ctx.fillRect(px,py,f.w*0.7,f.d*0.7);ctx.strokeRect(px,py,f.w*0.7,f.d*0.7);}ctx.fillStyle='#1a3a5c';ctx.fillText(`${f.name}#${idx+1}`,px+5,py-5);});
+        state.placedContainers.forEach(pc=>{const m=allContainers.find(x=>x.id===pc.matId);if(!m)return;ctx.font='38px sans-serif';ctx.fillStyle='#1a3a5c';ctx.fillText(m.icon,75+pc.x*0.7-18,60+pc.y*0.7+14);});
+        if(state.waterPlaced){ctx.fillStyle='#a0d0ff';ctx.fillRect(75+state.waterPlaced.x*0.7-20,60+state.waterPlaced.y*0.7-20,40,40);ctx.fillText('💧',75+state.waterPlaced.x*0.7-8,60+state.waterPlaced.y*0.7+10);}
         ctx.fillStyle='#fff';ctx.fillRect(w-340,50,300,90);ctx.strokeStyle='#1a3a5c';ctx.setLineDash([5,5]);ctx.strokeRect(w-340,50,300,90);ctx.setLineDash([]);
         if(state.signature){const img=new Image();img.onload=()=>{ctx.drawImage(img,w-335,55,290,80);};img.src=state.signature;}else{ctx.fillStyle='#aaa';ctx.font='16px sans-serif';ctx.fillText('设计师签名 (点击)',w-330,100);}
         canvas.onclick=function(e){const rect=canvas.getBoundingClientRect();const mx=e.clientX-rect.left,my=e.clientY-rect.top;if(mx>=w-340&&mx<=w-40&&my>=50&&my<=140)showSignatureModal();};
